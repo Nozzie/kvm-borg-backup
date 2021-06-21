@@ -1,7 +1,7 @@
 # kvm-borg-backup
 
 ## What is does
-This script creates external backups of (running) KVM/QEMU VM's. Instead of copying the image files to some backup location, it uses BorgBackup archives. This enables encryption, compression and deduplication of the images.
+This script creates external backups of (running) KVM/QEMU VM's. Instead of copying the image files to some backup location, it uses a BorgBackup repository. This enables encryption, compression and deduplication of the images.
 
 The VM's must use image files that support snapshots (qcow2). If a VM has another type of disk, raw for instance, it will be skipped. You can backup a raw image based VM, if it is shut down first.
 
