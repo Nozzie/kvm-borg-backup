@@ -41,7 +41,7 @@ SINGLE_LOGFILE="/var/log/kvmbackup.log"
 LOGDIR=/var/log
 # Log verbosity. 3 is normal output (just virsh and borg program output
 # + warnings and errors), 6 is debug
-LOG_VERBOSITY=3
+LOG_VERBOSITY=6
 # Print output to screen or not
 STDOUT_LOG=true
 
@@ -161,8 +161,8 @@ function backup {
     trap 'echo $( date ) Backup interrupted >&2; exit 2' INT TERM
 
     einfo "Starting borg backup for ${ACTIVEVM}"
-    edebug "borg create --stats --show-rc --compression $COMP --files-cache mtime,size $BORG_REPO::${ACTIVEVM}'-{now}' ${DISK_PATH[*]} ${XMLFILE} 2>&1"
-    borg create --stats --show-rc --compression $COMP --files-cache mtime,size $BORG_REPO::"${ACTIVEVM}"'-{now}' ${DISK_PATH[*]} "${XMLFILE}" 2>&1
+    edebug "borg create --stats --show-rc --compression $COMP $BORG_REPO::${ACTIVEVM}'-{now}' ${DISK_PATH[*]} ${XMLFILE} 2>&1"
+    borg create --stats --show-rc --compression $COMP $BORG_REPO::"${ACTIVEVM}"'-{now}' ${DISK_PATH[*]} "${XMLFILE}" 2>&1
     backup_exit=$?
 
     enotify "Pruning borg repository for ${ACTIVEVM}"
