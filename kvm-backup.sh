@@ -5,8 +5,6 @@
 # https://borgbackup.readthedocs.io/en/1.1.16/quickstart.html
 #
 # The VM you want to backup has to support snapshots (qcow2)
-# Borg key files will be create in /root/.config/borg/keys (when run as root)
-# You need the passphrase and key file when you need to restore a backup
 
 ### Usage
 # When run without parameters, the script will backup all VM's that are not
@@ -24,9 +22,13 @@ EXCLUDE_LIST=()
 SKIP_SHUT_OFF=true
 
 ### Borg settings
-# Borg passphrase. Setting this here, so you won't be asked for your repository passphrase:
+# Borg passphrase. Setting this here, so you won't be asked for your repository passphrase.
+# Not needed if BORG_ENCRYPTION_METHOD=none
 # Change this to something else
 export BORG_PASSPHRASE='J5BX8F9cUNpPvfhwKXc3kqT3NPFaguzF'
+# Borg encryption to be used. Location of the key file depends on the method used.
+# See: https://borgbackup.readthedocs.io/en/stable/usage/init.html for details.
+BORG_ENCRYPTION_METHOD="repokey-blake2"
 # Backups to keep, see: https://borgbackup.readthedocs.io/en/stable/usage/prune.html
 #PRUNE_KEEP="--keep-daily 7 --keep-weekly 4 --keep-monthly 12"
 PRUNE_KEEP="--keep-daily 7 --keep-weekly 4 --keep-monthly 6"
@@ -154,15 +156,16 @@ function backup {
     einfo "Borg repository: ${BORG_REPO}"
 
     if [ ! -d "$BORG_REPO" ]; then
-        einfo "Initializing borg backup for ${DIR} at $BORG_REPO"
-        borg init -e keyfile $BORG_REPO
+        einfo "Initializing borg backup for ${DIR} at ${BORG_REPO}"
+        edebug "borg init --encryption ${BORG_ENCRYPTION_METHOD} ${BORG_REPO}"
+        borg init --encryption ${BORG_ENCRYPTION_METHOD} ${BORG_REPO}
     fi
 
     trap 'echo $( date ) Backup interrupted >&2; exit 2' INT TERM
 
     einfo "Starting borg backup for ${ACTIVEVM}"
-    edebug "borg create --stats --show-rc --compression $COMP $BORG_REPO::${ACTIVEVM}'-{now}' ${DISK_PATH[*]} ${XMLFILE} 2>&1"
-    borg create --stats --show-rc --compression $COMP $BORG_REPO::"${ACTIVEVM}"'-{now}' ${DISK_PATH[*]} "${XMLFILE}" 2>&1
+    edebug "borg create --stats --show-rc --compression ${COMP} ${BORG_REPO}::${ACTIVEVM}'-{now}' ${DISK_PATH[*]} ${XMLFILE} 2>&1"
+    borg create --stats --show-rc --compression ${COMP} ${BORG_REPO}::"${ACTIVEVM}"'-{now}' ${DISK_PATH[*]} "${XMLFILE}" 2>&1
     backup_exit=$?
 
     enotify "Pruning borg repository for ${ACTIVEVM}"
@@ -187,10 +190,11 @@ function backup {
 Log_Open
 
 # Check if a previous process is still running
-edebug "Check if there is another instance of the script running"
-for pid in $(pidof -x $SCRIPT); do
+SCRIPT=$(basename $0)
+edebug "Check if there is another instance of script '${SCRIPT}' running"
+for pid in $(pidof -x ${SCRIPT}); do
     if [ $pid != $$ ]; then
-        eerror "$SCRIPT : Process is already running with PID $pid\n"
+        eerror "${SCRIPT} : Process is already running with PID $pid\n"
         exit 1
     fi
 done
@@ -202,7 +206,6 @@ HOSTNAME=$(uname -n)
 DATE=$(date +"%Y%m%d")
 DATETIME=$(date +"%Y%m%d_%H%M%S")
 SCRIPT_BASE=$(basename $0 .sh)
-SCRIPT=$(basename $0)
 
 pattern="\b$1\b"
 if [[ "${VM_LIST_RUNNING[*]}" =~ $pattern ]] || [[ "${VM_LIST_OFF[*]}" =~ $pattern ]]; then
@@ -210,7 +213,7 @@ if [[ "${VM_LIST_RUNNING[*]}" =~ $pattern ]] || [[ "${VM_LIST_OFF[*]}" =~ $patte
         # Command line input exists in vmlist
         VM_LIST=$1
     else
-        esilent "---------- START BACKUP OF HOST: $HOSTNAME ----------"
+        esilent "---------- START BACKUP OF HOST: ${HOSTNAME} ----------"
         if $SKIP_SHUT_OFF; then
             VM_LIST=${VM_LIST_RUNNING}
         else
@@ -334,7 +337,7 @@ for ACTIVEVM in $VM_LIST; do
 done
 
 if [ "$1" == "" ]; then
-    esilent "---------- END BACKUP OF HOST: $HOSTNAME ----------\n"
+    esilent "---------- END BACKUP OF HOST: ${HOSTNAME} ----------\n"
 fi
 
 Log_Close
