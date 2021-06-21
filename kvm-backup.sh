@@ -25,6 +25,7 @@ SKIP_SHUT_OFF=true
 
 ### Borg settings
 # Borg passphrase. Setting this here, so you won't be asked for your repository passphrase:
+# Change this to something else
 export BORG_PASSPHRASE='J5BX8F9cUNpPvfhwKXc3kqT3NPFaguzF'
 # Backups to keep, see: https://borgbackup.readthedocs.io/en/stable/usage/prune.html
 #PRUNE_KEEP="--keep-daily 7 --keep-weekly 4 --keep-monthly 12"
