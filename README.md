@@ -6,8 +6,14 @@ This script creates external backups of (running) KVM/QEMU VM's. Instead of copy
 The VM's must use image files that support snapshots (qcow2). If a VM has another type of disk, raw for instance, it will be skipped. You can backup a raw image based VM, if it is shut down first.
 
 **I only tested qcow2 and raw disks, you will have to test other types yourself.**
+## Usage
+When run without any arguments, all VM's will be backed up. You can exclude VM's form being backed up by putting them in the EXCLUDE_LIST array.  
+If you give a VM name as the first argument, only that VM will be backed up (even if it is in the EXCLUDE_LIST).  
 
-Below is an example of the output.
+## Output
+You can enable or disable output to stdout by setting STDOUT_LOG to true/false. When set to false, output will still be logged to the logfile.  
+
+## Example
 
 From inside the VM:
 ```
@@ -19,6 +25,11 @@ run             990M  660K  990M   1% /run
 tmpfs           990M  188K  990M   1% /dev/shm
 tmpfs           990M     0  990M   0% /tmp
 tmpfs           198M     0  198M   0% /run/user/1000
+```
+Image file:
+```
+[nozz@host ~]$ ls -lh /var/lib/libvirt/images/arch_linux.qcow2
+-rw-r--r-- 1 nobody kvm 44G Jun 21 10:01 /var/lib/libvirt/images/arch_linux.qcow2
 ```
 Backup output (this repo contains 5 backups):
 ```
@@ -41,11 +52,7 @@ Chunk index:                   17106                78943
 terminating with success status, rc 0
 
 ```
-
-Based on the folloing scripts/documentation:
-
-https://nixlab.org/blog/backup-kvm-virtual-machines
-
-https://www.ludovicocaldara.net/dba/bash-tips-4-use-logging-levels/
-
+## Resources
+https://nixlab.org/blog/backup-kvm-virtual-machines  
+https://www.ludovicocaldara.net/dba/bash-tips-4-use-logging-levels/  
 https://borgbackup.readthedocs.io/en/1.1.16/quickstart.html
