@@ -227,7 +227,7 @@ fi
 
 for ACTIVEVM in $VM_LIST; do
     # Check if the VM is in the exclude list, or if it has been set throuth the command line
-    if [[ ! "${EXCLUDE_LIST[*]}" =~ "${ACTIVEVM}" ]] || [[ "${ACTIVEVM}" == "$1" ]]; then
+    if [[ ! ${EXCLUDE_LIST[*]} =~ ([[:space:]]|^)"${ACTIVEVM}"([[:space:]]|$) ]] || [[ "${ACTIVEVM}" == "$1" ]]; then
         pat="\b${ACTIVEVM}\b"
         if [[ "${VM_LIST_OFF[*]}" =~ $pat ]]; then
             VM_IS_ON=false
