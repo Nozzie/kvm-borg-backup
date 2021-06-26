@@ -16,7 +16,7 @@
 # Backup dir
 BACKUP_DIR=/storage/vmbackup
 # VM's to exclude. Array with names as given by 'virsh list'. Example:
-#EXCLUDE_LIST=("archlinux" "openwrt")
+#EXCLUDE_LIST=("openwrt" "archlinux-2")
 EXCLUDE_LIST=()
 # Skip VM's that have been shut down
 SKIP_SHUT_OFF=true
@@ -41,9 +41,9 @@ COMP='zstd,6'
 SINGLE_LOGFILE="/var/log/kvmbackup.log"
 # Dir to log to, this is ignored when SINGLE_LOGFILE is set
 LOGDIR=/var/log
-# Log verbosity. 3 is normal output (just virsh and borg program output
-# + warnings and errors), 6 is debug
-LOG_VERBOSITY=6
+# Log verbosity. 4 is normal output (just virsh and borg program output
+# + warnings, errors and notify), 6 is debug
+LOG_VERBOSITY=4
 # Print output to screen or not
 STDOUT_LOG=true
 
@@ -213,7 +213,7 @@ if [[ "${VM_LIST_RUNNING[*]}" =~ $pattern ]] || [[ "${VM_LIST_OFF[*]}" =~ $patte
         # Command line input exists in vmlist
         VM_LIST=$1
     else
-        esilent "---------- START BACKUP OF HOST: ${HOSTNAME} ----------"
+        esilent "--------- START BACKUP OF HOST: ${HOSTNAME} ---------"
         if $SKIP_SHUT_OFF; then
             VM_LIST=${VM_LIST_RUNNING}
         else
@@ -268,7 +268,7 @@ for ACTIVEVM in $VM_LIST; do
         fi
 
         if $DO_BACKUP; then
-            esilent "---------- START BACKUP OF VM: ${ACTIVEVM} ----------"
+            esilent "--------- START BACKUP OF VM: ${ACTIVEVM} ---------"
             # create directories
             einfo "Create dir: $BACKUP_DIR/tmp-ext-snap/${ACTIVEVM}"
             mkdir -p $BACKUP_DIR/tmp-ext-snap/"${ACTIVEVM}"
@@ -329,15 +329,15 @@ for ACTIVEVM in $VM_LIST; do
             find $BACKUP_DIR/config/"${ACTIVEVM}"/* -exec rm {} \;
 
             ### END BACKUP
-            esilent "---------- END BACKUP OF VM: ${ACTIVEVM} ----------"
+            esilent "--------- END BACKUP OF VM: ${ACTIVEVM} ---------"
         fi
     else
-        ewarn "Excluded ${ACTIVEVM} because it is in the exclude list"
+        enotify "Excluded ${ACTIVEVM} because it is in the exclude list"
     fi
 done
 
 if [ "$1" == "" ]; then
-    esilent "---------- END BACKUP OF HOST: ${HOSTNAME} ----------\n"
+    esilent "--------- END BACKUP OF HOST: ${HOSTNAME} ---------\n"
 fi
 
 Log_Close
