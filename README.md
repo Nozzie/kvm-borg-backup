@@ -38,7 +38,7 @@ Repository size on disk:
 ```
 Borg info output:
 ```
-[arch@main ~]$ borg info /storage/vmbackup/archlinux
+[nozz@host ~]$ borg info /storage/vmbackup/archlinux
 Enter passphrase for key /storage/vmbackup/archlinux:
 Repository ID: 15094b263afadff74fad605a4ef27e5a37affd3d16209e5b42e147ea2a27fa79
 Location: /storage/vmbackup/archlinux
@@ -55,7 +55,7 @@ Chunk index:                   27612               351011
 ```
 Borg list output:
 ```
-[arch@main ~]$ borg list /storage/vmbackup/archlinux
+[nozz@host ~]$ borg list /storage/vmbackup/archlinux
 Enter passphrase for key /storage/vmbackup/archlinux:
 archlinux-2021-07-18T04:05:02        Sun, 2021-07-18 04:05:02 [d736a8f377894c33b0898c46f6d511956f4e55b1c2f6a305b76284354727f431]
 archlinux-2021-07-25T04:05:02        Sun, 2021-07-25 04:05:03 [a4a04f2f07e673e354bb883ccebe30e57e49a62633cd178d41396b92b6afa174]
