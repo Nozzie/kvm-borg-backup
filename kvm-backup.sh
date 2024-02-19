@@ -252,13 +252,13 @@ for ACTIVEVM in $VM_LIST; do
             for DISK in ${DISK_PATH[*]}; do
                 einfo "Disk path: ${DISK}"
                 # Get volume type
-                edebug "virsh vol-dumpxml --pool images --vol ${DISK} 2>/dev/null | grep -e '<volume' | awk -F \"[']\" '{print \$2}'"
-                VOLUME_TYPE=($(virsh vol-dumpxml --pool images --vol ${DISK} 2>/dev/null | grep -e '<volume' | awk -F "[']" '{print $2}'; exit ${PIPESTATUS[0]}))
+                edebug "virsh vol-dumpxml --vol ${DISK} 2>/dev/null | grep -e '<volume' | awk -F \"[']\" '{print \$2}'"
+                VOLUME_TYPE=($(virsh vol-dumpxml --vol ${DISK} 2>/dev/null | grep -e '<volume' | awk -F "[']" '{print $2}'; exit ${PIPESTATUS[0]}))
                 if [ $? -eq 0 ]; then
                     edebug "Volume type: ${VOLUME_TYPE}"
                     # Check disk type
-                    edebug "virsh vol-dumpxml --pool images --vol ${DISK} | grep format | awk -F \"[']\" '{print \$2}'"
-                    DISK_TYPE=($(virsh vol-dumpxml --pool images --vol ${DISK} | grep format | awk -F "[']" '{print $2}'))
+                    edebug "virsh vol-dumpxml --vol ${DISK} | grep format | awk -F \"[']\" '{print \$2}'"
+                    DISK_TYPE=($(virsh vol-dumpxml --vol ${DISK} | grep format | awk -F "[']" '{print $2}'))
                     einfo "Disk type: ${DISK_TYPE}"
                 else
                     eerror "Wrong disk type: ${DISK} ABORT!"
