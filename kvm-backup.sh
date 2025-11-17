@@ -217,7 +217,7 @@ if [[ "${VM_LIST_RUNNING[*]}" =~ $pattern ]] || [[ "${VM_LIST_OFF[*]}" =~ $patte
         if $SKIP_SHUT_OFF; then
             VM_LIST=${VM_LIST_RUNNING}
         else
-            VM_LIST=${VM_LIST_OFF}
+            VM_LIST="${VM_LIST_OFF} ${VM_LIST_RUNNING}"
         fi
     fi
 else
